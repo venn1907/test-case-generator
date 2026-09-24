@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sinh test case competitive programming và chạy solution bằng compiler local." />
+  <title>CP Test Forge</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="CP Test Forge"><span class="brand-mark">{ }</span><span>CP Test Forge</span></a>
+    <div class="top-actions"><span id="judgeStatus" class="status"><i></i> Compiler</span><button id="themeBtn" class="icon-btn" title="Đổi giao diện">◐</button></div>
+  </header>
+
+  <main>
+    <nav class="steps" aria-label="Các bước">
+      <button class="step active" data-step="1"><span>1</span>Định dạng</button>
+      <button class="step" data-step="2"><span>2</span>Sinh test</button>
+      <button class="step" data-step="3"><span>3</span>Chạy code</button>
+      <button class="step" data-step="4"><span>4</span>Xuất ZIP</button>
+    </nav>
+
+    <section class="workspace active" data-panel="1">
+      <div class="section-head">
+        <div><p class="eyebrow">INPUT BUILDER</p><h1>Thiết kế định dạng input</h1></div>
+        <select id="presetSelect" class="select compact" aria-label="Mẫu định dạng">
+          <option value="">Chọn mẫu…</option><option value="array">n + mảng</option><option value="multiArray">t test: n + mảng</option><option value="matrix">Ma trận</option><option value="graph">Đồ thị</option><option value="tree">Cây</option>
+        </select>
+      </div>
+
+      <div class="settings-row">
+        <label>Số file test<input id="fileCount" type="number" min="1" max="100" value="5" /></label>
+        <label>Seed<input id="seed" type="text" value="2026" placeholder="Ví dụ: contest-round-1" /></label>
+        <label class="switch-label"><span>Nhiều test trong mỗi file</span><input id="multiCase" type="checkbox" /><i></i></label>
+        <label id="caseCountWrap" class="hidden">Số test / file<div class="range"><input id="caseMin" type="number" min="1" value="2" /><span>–</span><input id="caseMax" type="number" min="1" value="5" /></div></label>
+      </div>
+
+      <div class="builder-grid">
+        <aside class="palette">
+          <p class="label">THÊM KHỐI</p>
+          <button data-add="variables"><b>123</b><span>Biến</span></button>
+          <button data-add="array"><b>[ ]</b><span>Mảng 1D</span></button>
+          <button data-add="matrix"><b>▦</b><span>Ma trận</span></button>
+          <button data-add="graph"><b>⌘</b><span>Đồ thị</span></button>
+          <button data-add="tree"><b>⑂</b><span>Cây</span></button>
+          <button data-add="literal"><b>“”</b><span>Văn bản</span></button>
+        </aside>
+
+        <div class="canvas">
+          <div id="globalArea" class="block-area">
+            <div class="area-title"><span>Đầu file</span><small>in một lần</small></div>
+            <div class="dropzone" data-section="global"></div>
+          </div>
+          <div id="caseArea" class="block-area hidden">
+            <div class="area-title"><span>Mỗi test</span><small>lặp theo t</small></div>
+            <div class="dropzone" data-section="case"></div>
+          </div>
+          <div class="canvas-actions"><span id="formatSummary">0 khối</span><button id="clearBtn" class="text-btn danger">Xóa tất cả</button><button id="generateBtn" class="primary">Sinh test <span>→</span></button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace" data-panel="2">
+      <div class="section-head"><div><p class="eyebrow">GENERATED INPUT</p><h1>Kiểm tra test đã sinh</h1></div><button id="regenerateBtn" class="secondary">↻ Sinh lại</button></div>
+      <div class="test-layout"><div id="testTabs" class="test-tabs"></div><div class="editor-wrap"><div class="editor-bar"><span id="currentFile">001.in</span><button id="copyInput" class="text-btn">Sao chép</button></div><textarea id="inputPreview" class="code-editor" spellcheck="false"></textarea></div></div>
+      <div class="footer-actions"><button class="secondary" data-go="1">← Định dạng</button><button class="primary" data-go="3">Tiếp tục chạy code →</button></div>
+    </section>
+
+    <section class="workspace" data-panel="3">
+      <div class="section-head"><div><p class="eyebrow">SOLUTION RUNNER</p><h1>Chạy solution với toàn bộ test</h1></div><select id="language" class="select compact"><option value="cpp17">C++17</option><option value="c">C</option><option value="java">Java 13</option><option value="python3">Python 3</option><option value="javascript">JavaScript</option></select></div>
+      <div class="runner-grid">
+        <div class="editor-wrap"><div class="editor-bar"><span>solution</span><span id="codeHint">main.cpp</span></div><textarea id="sourceCode" class="code-editor tall" spellcheck="false"></textarea></div>
+        <div class="results-panel"><div class="editor-bar"><span>Kết quả</span><span id="runSummary">Chưa chạy</span></div><div id="runResults" class="run-results"><div class="empty-state"><b>▶</b><span>Nhấn Chạy tất cả để tạo output</span></div></div></div>
+      </div>
+      <div class="footer-actions"><button class="secondary" data-go="2">← Input</button><button id="runBtn" class="primary">▶ Chạy tất cả</button></div>
+    </section>
+
+    <section class="workspace" data-panel="4">
+      <div class="export-card"><div class="zip-art">ZIP</div><p class="eyebrow">READY TO EXPORT</p><h1>Bộ test đã sẵn sàng</h1><p id="exportSummary">0 cặp input / output</p><label>Tên file<input id="archiveName" value="testcases" /></label><button id="exportBtn" class="primary wide">Tải file ZIP</button><small>001.in · 001.out · 002.in · 002.out · …</small></div>
+      <div class="footer-actions"><button class="secondary" data-go="3">← Kết quả chạy</button></div>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
