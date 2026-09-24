@@ -8,7 +8,7 @@ Yêu cầu: Docker Desktop trên Windows hoặc Docker Engine trên Linux.
 
 ```bash
 git clone <repository-url>
-cd TestCaseGenerator
+cd test-case-generator
 docker compose up -d --build
 ```
 
