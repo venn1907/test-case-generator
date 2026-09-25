@@ -1,22 +1,9 @@
-x-judge0: &judge0
-  image: judge0/judge0:1.13.1
-  volumes:
-    - ./judge0.conf:/judge0.conf:ro
-  privileged: true
-  restart: unless-stopped
-  logging:
-    driver: json-file
-    options:
-      max-size: 100m
-
 services:
   app:
     image: testcasegenerator-app:latest
     build: .
     environment:
-      EXECUTION_ENGINE: ${EXECUTION_ENGINE:-piston}
       PISTON_URL: http://piston:2000
-      JUDGE0_URL: http://judge0-server:2358
       PORT: 3000
     ports:
       - "8080:3000"
@@ -47,54 +34,5 @@ services:
         condition: service_started
     restart: "no"
 
-  judge0-server:
-    <<: *judge0
-    profiles: ["judge0"]
-    ports:
-      - "2358:2358"
-    depends_on:
-      judge0-db:
-        condition: service_healthy
-      judge0-redis:
-        condition: service_healthy
-
-  judge0-worker:
-    <<: *judge0
-    profiles: ["judge0"]
-    command: ["./scripts/workers"]
-    depends_on:
-      judge0-db:
-        condition: service_healthy
-      judge0-redis:
-        condition: service_healthy
-
-  judge0-db:
-    # Floating patch tag avoids the broken/corrupted postgres:16.2 layer seen
-    # on some Docker Desktop caches while keeping the database major stable.
-    image: postgres:16-alpine
-    profiles: ["judge0"]
-    env_file: judge0.conf
-    volumes:
-      - judge0-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U judge0 -d judge0"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    restart: unless-stopped
-
-  judge0-redis:
-    image: redis:7.2.4
-    profiles: ["judge0"]
-    env_file: judge0.conf
-    command: ["bash", "-c", "docker-entrypoint.sh --appendonly no --requirepass \"$$REDIS_PASSWORD\""]
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep PONG"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    restart: unless-stopped
-
 volumes:
-  judge0-data:
   piston-packages:

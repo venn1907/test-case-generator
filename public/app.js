@@ -314,5 +314,5 @@ $('#language').onchange=e=>{const ext={cpp17:'main.cpp',c:'main.c',java:'Main.ja
 $('#themeBtn').onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');};
 if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark');
 $('#sourceCode').value=codeTemplate('cpp17');
-fetch('/api/health').then(r=>{if(!r.ok)throw 0;return r.json()}).then(x=>{ $('#judgeStatus').classList.add(x.compiler==='ok'?'ok':'bad'); $('#judgeStatus').lastChild.textContent=` ${x.engine==='piston'?'Piston':'Judge0'}`; }).catch(()=>$('#judgeStatus').classList.add('bad'));
+fetch('/api/health').then(r=>{if(!r.ok)throw 0;return r.json()}).then(x=>$('#compilerStatus').classList.add(x.compiler==='ok'?'ok':'bad')).catch(()=>$('#compilerStatus').classList.add('bad'));
 load();

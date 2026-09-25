@@ -24,7 +24,7 @@ Mở:
 - Website: http://localhost:8080
 - Piston API: http://localhost:2000/api/v2/runtimes
 
-Dừng hệ thống (giữ database):
+Dừng hệ thống (giữ các runtime Piston đã tải):
 
 ```bash
 docker compose down
@@ -38,24 +38,9 @@ docker compose down -v
 
 > Không đưa cổng compiler `2000` ra Internet nếu chưa bổ sung firewall và authentication.
 
-### Vì sao mặc định dùng Piston trên Windows?
+### Compiler local
 
-Docker Desktop trên Windows dùng Linux kernel WSL2 với cgroup v2. Judge0 CE 1.13.1 đóng gói Isolate 1.8.1 chỉ dùng đường dẫn cgroup v1, nên container vẫn khởi động nhưng submission lỗi `No such file or directory @ rb_sysopen - /box/main.cpp`. Piston hỗ trợ cgroup v2 và phù hợp để chạy local trên Docker Desktop.
-
-Judge0 vẫn có sẵn dưới Compose profile cho máy Linux đã cấu hình cgroup v1:
-
-```bash
-EXECUTION_ENGINE=judge0 docker compose --profile judge0 up -d --build
-```
-
-Trong PowerShell:
-
-```powershell
-$env:EXECUTION_ENGINE = "judge0"
-docker compose --profile judge0 up -d --build
-```
-
-Không dùng profile Judge0 trên Docker Desktop Windows.
+Dự án sử dụng duy nhất Piston, hỗ trợ kernel cgroup v2 của Docker Desktop trên Windows và Docker Engine trên Linux.
 
 ## Cách dùng
 
@@ -111,7 +96,7 @@ Website chạy tại http://localhost:3000.
 
 - `public/`: giao diện tĩnh và generator chạy trên trình duyệt.
 - `server/`: API Node.js; proxy chạy code sang compiler local và tạo ZIP.
-- `docker-compose.yml`: app, Piston; kèm profile Judge0 tùy chọn.
+- `docker-compose.yml`: ứng dụng, Piston và bước tự động cài runtime.
 - Dữ liệu cấu hình builder được lưu trong `localStorage`; source code và test không được lưu phía server.
 
 ## Giới hạn an toàn
